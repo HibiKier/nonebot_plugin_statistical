@@ -58,3 +58,19 @@
 |显示统计展示白名单| 无 | 显示当前的统计展示白名单    |     显示统计展示白名单
 
 
+## 配置
+
+  ```
+  
+  1.是否需要更改数据存储的路径？
+  # 在 .env 文件中配置
+  # 默认路径为 data/statistical/
+  
+  STATISTICAL_PATH = ''
+  
+  
+  2.在bot入口文件添加
+    nonebot.load_plugin("nonebot_plugin_statistical")
+  
+  ```
+
