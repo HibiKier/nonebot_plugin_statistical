@@ -24,6 +24,23 @@
     5.关于修改文件，只可以修改 plugin2cmd.json 文件，另外2个文件是基于这个文件生成的，
         可以修改文件中的 'white_list' 以及模块的cmd，修改完毕后通过命令 '重载统计数据' 来重新生成文件
   
+
+## 配置
+
+  ```
+  
+  1.是否需要更改数据存储的路径？
+  # 在 .env 文件中配置
+  # 默认路径为 data/statistical/
+  
+  STATISTICAL_PATH = ''
+  
+  
+  2.在bot入口文件添加
+    nonebot.load_plugin("nonebot_plugin_statistical")
+  
+  ```
+  
   
 ## 使用方法
 
@@ -58,19 +75,4 @@
 |显示统计展示白名单| 无 | 显示当前的统计展示白名单    |     显示统计展示白名单
 
 
-## 配置
-
-  ```
-  
-  1.是否需要更改数据存储的路径？
-  # 在 .env 文件中配置
-  # 默认路径为 data/statistical/
-  
-  STATISTICAL_PATH = ''
-  
-  
-  2.在bot入口文件添加
-    nonebot.load_plugin("nonebot_plugin_statistical")
-  
-  ```
 
