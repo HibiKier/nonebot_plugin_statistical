@@ -30,6 +30,8 @@
         
     6.cmd只会自动记录on_command的命令，on_regex以及on_keyword只会在cmd中保存模块名称，
         请在 plugin2cmd.json 中自定义后重载，或使用命令直接添加
+        
+    7.修改过 plugin2cmd.json 文件后必须使用命令 '重载统计数据'！
   
 
 ## 配置
