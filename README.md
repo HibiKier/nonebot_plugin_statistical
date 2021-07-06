@@ -23,7 +23,8 @@
             说明：将 花花花 提升到cmd[0]的位置，图表中将以 花花花 显示该模块而不是滴滴滴
     5.关于修改文件，只可以修改 plugin2cmd.json 文件，另外2个文件是基于这个文件生成的，
         可以修改文件中的 'white_list' 以及模块的cmd，修改完毕后通过命令 '重载统计数据' 来重新生成文件
-    6.cmd只会自动记录on_command的命令，on_regex以及on_keyword只会在cmd中保存模块名称，请在 plugin2cmd.json 中自定义后重载，或使用命令直接添加
+    6.cmd只会自动记录on_command的命令，on_regex以及on_keyword只会在cmd中保存模块名称，请在 plugin2cmd.json 中自定义后重载，
+        或使用命令直接添加
   
 
 ## 配置
