@@ -41,16 +41,16 @@
   ```
   
   1.一些基础配置？
-  # 在 .env 文件中配置
-  # 以下皆为默认值
-  
-  STATISTICAL_PATH = ''     # 设置数据存储路径，默认路径为 data/statistical/
-  
-  STATISTICAL_BLACK_MODEL = []          # 统计插件黑名单，不会统计列表中的插件模块，示例：[setu, loli]
-  
-  STATISTICAL_BLACK_PRIORITY = []       # 统计插件黑名单，不会统计列表中指定priority的所有插件，示例：[1]
-  
-  STATISTICAL_AUTO_CMD = True           # 开关自动更新on_command的命令，但如果有on_message的话也会被更新相同命令
+    # 在 .env 文件中配置
+    # 以下皆为默认值
+
+    STATISTICAL_PATH = ''     # 设置数据存储路径，默认路径为 data/statistical/
+
+    STATISTICAL_BLACK_MODEL = []          # 统计插件黑名单，不会统计列表中的插件模块，示例：[setu, loli]
+
+    STATISTICAL_BLACK_PRIORITY = []       # 统计插件黑名单，不会统计列表中指定priority的所有插件，示例：[1]
+
+    STATISTICAL_AUTO_CMD = True           # 开关自动更新on_command的命令，但如果有on_message的话也会被更新相同命令
   
   2.在bot入口文件添加
     nonebot.load_plugin("nonebot_plugin_statistical")
