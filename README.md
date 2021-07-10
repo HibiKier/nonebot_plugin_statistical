@@ -53,13 +53,6 @@
     nonebot.load_plugin("nonebot_plugin_statistical")
   
   ```
-### 推荐的配置
-
-```
-
-将所有 on_message 的 priority 设置为1，且设置 STATISTICAL_BLACK_PRIORITY = [1]
-
-```
   
 ## 使用方法
 
