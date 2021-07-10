@@ -46,11 +46,11 @@
 
     STATISTICAL_PATH = ''     # 设置数据存储路径，默认路径为 data/statistical/
 
+    # 不屏蔽 on_message 会导致统计重复以及重启bot时该插件因重复cmd报错
+    
     STATISTICAL_BLACK_MODEL = []          # 统计插件黑名单，不会统计列表中的插件模块，示例：[setu, loli]
 
     STATISTICAL_BLACK_PRIORITY = []       # 统计插件黑名单，不会统计列表中指定priority的所有插件，示例：[1]
-
-    STATISTICAL_AUTO_CMD = True           # 开关自动更新on_command的命令，但如果有on_message的话也会被更新相同命令
   
   2.在bot入口文件添加
     nonebot.load_plugin("nonebot_plugin_statistical")
@@ -63,8 +63,6 @@
   1.可以的话，将所有 on_message 设置一个相同的 priority，并将 STATISTICAL_BLACK_PRIORITY = [指定的priority]
   
   2.如果插件中仅包含 on_message，可在STATISTICAL_BLACK_MODEL中直接添加
-  
-  3.将 STATISTICAL_AUTO_CMD 设置为 False，所有插件的 cmd 通过自己手动在 plugin2cmd.json 添加
   
   ```
   
