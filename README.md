@@ -5,6 +5,8 @@
   基于 run_postprocessor 实现的功能调用统计以及可视化，且可为插件设置别名和显示白名单， 
   <br>  
   已实现动态命令增删改查别名或手动修改文件后重载，以及动态命令增删查白名单，在白名单中的插件不会再可视化中显示。
+  <br>
+  提供配置黑名单，屏蔽统计该插件，一般为 on_message 等 或不想被统计的插件
 
 ## 注
 
@@ -38,18 +40,26 @@
 
   ```
   
-  1.是否需要更改数据存储的路径？
+  1.一些基础配置？
   # 在 .env 文件中配置
-  # 默认路径为 data/statistical/
   
-  STATISTICAL_PATH = ''
+  STATISTICAL_PATH = ''     # 设置数据存储路径，默认路径为 data/statistical/
   
+  STATISTICAL_BLACK_MODEL = []          # 统计插件黑名单，不会统计列表中的插件模块，示例：[setu, loli]
+  
+  STATISTICAL_BLACK_PRIORITY = []       # 统计插件黑名单，不会统计列表中指定priority的所有插件，示例：[1]
   
   2.在bot入口文件添加
     nonebot.load_plugin("nonebot_plugin_statistical")
   
   ```
-  
+### 推荐的配置
+
+```
+
+将所有 on_message 的 priority 设置为1，且设置 STATISTICAL_BLACK_PRIORITY = [1]
+
+```
   
 ## 使用方法
 
