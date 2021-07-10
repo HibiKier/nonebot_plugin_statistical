@@ -156,6 +156,7 @@ except FileNotFoundError:
             module = matcher.module
             if module not in BLACK_LIST and priority not in BLACK_PRIORITY:
                 plugin2cmd[module] = {'cmd': []}
+    save_data(plugin2cmd, None, None)
 
 
 # 重新加载数据...
