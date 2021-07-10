@@ -42,7 +42,7 @@
   
   1.一些基础配置？
   # 在 .env 文件中配置
-  # 一下皆为默认值
+  # 以下皆为默认值
   
   STATISTICAL_PATH = ''     # 设置数据存储路径，默认路径为 data/statistical/
   
