@@ -65,7 +65,7 @@
   
   2.如果插件中仅包含 on_message，可在STATISTICAL_BLACK_MODEL中直接添加
   
-  3.首次运行生成 plugin2cmd.json，在文件中 white_list 字段中添加 on_message模块 至后再次启动
+  3.首次运行生成 plugin2cmd.json，在文件中 white_list 字段中添加 on_message模块 后再次启动
   
   ```
   
