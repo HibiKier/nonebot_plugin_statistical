@@ -15,7 +15,7 @@ driver: Driver = nonebot.get_driver()
 DATA_PATH = driver.config.statistical_path if driver.config.statistical_path else 'data/statistical/'
 BLACK_LIST = driver.config.statistical_black_model if driver.config.statistical_black_model else []
 BLACK_PRIORITY = driver.config.statistical_black_priority if driver.config.statistical_black_priority else []
-AUTO_CMD_FLAG = True if str(driver.config.statistical_auto_cmd).upper() == 'TRUE' else False
+AUTO_CMD_FLAG = False if str(driver.config.statistical_auto_cmd).upper() == 'FALSE' else True
 
 DATA_PATH = str(Path(DATA_PATH).absolute()) + '/'
 # print(DATA_PATH)
