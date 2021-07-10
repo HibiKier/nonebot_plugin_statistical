@@ -54,6 +54,15 @@
   
   ```
   
+### 推荐的配置
+
+  ```
+  1.可以的话，将所有 on_message 设置一个相同的 priority，并将 STATISTICAL_BLACK_PRIORITY = [指定的priority]
+  
+  2.如果插件中仅包含 on_message，可在STATISTICAL_BLACK_MODEL中直接添加
+  
+  ```
+  
 ## 使用方法
 
 ### 命令总汇
