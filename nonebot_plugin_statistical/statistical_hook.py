@@ -5,7 +5,7 @@ from nonebot import require
 from nonebot.adapters.cqhttp import Bot, GroupMessageEvent
 from nonebot.typing import Optional
 from .config import save_data, get_prefix_group_count_dict, get_prefix_user_count_dict, \
-    get_plugin2cmd, BLACK_LIST, BLACK_PRIORITY, AUTO_CMD_FLAG
+    get_plugin2cmd, BLACK_LIST, BLACK_PRIORITY
 try:
     import ujson as json
 except ModuleNotFoundError:
@@ -29,16 +29,22 @@ async def _(matcher: Matcher, exception: Optional[Exception], bot: Bot, event: G
                                                                                '添加统计展示白名单', '删除统计展示白名单',
                                                                                '显示统计展示白名单']:
             return
-        if not plugin2cmd.get(model):
-            if current_cmd:
-                plugin2cmd[model] = {'cmd': [current_cmd]}
-            else:
+        if model in plugin2cmd['white_list']:
+            if not plugin2cmd.get(model):
                 plugin2cmd[model] = {'cmd': [model]}
-        if current_cmd not in plugin2cmd[model]['cmd']:
-            if current_cmd:
-                plugin2cmd[model]['cmd'].append(current_cmd)
-            elif not plugin2cmd[model]['cmd']:
+            elif model not in plugin2cmd[model]['cmd']:
                 plugin2cmd[model]['cmd'].append(model)
+        else:
+            if not plugin2cmd.get(model):
+                if current_cmd:
+                    plugin2cmd[model] = {'cmd': [current_cmd]}
+                else:
+                    plugin2cmd[model] = {'cmd': [model]}
+            if current_cmd not in plugin2cmd[model]['cmd']:
+                if current_cmd:
+                    plugin2cmd[model]['cmd'].append(current_cmd)
+                elif not plugin2cmd[model]['cmd']:
+                    plugin2cmd[model]['cmd'].append(model)
         try:
             group_id = str(event.group_id)
         except AttributeError:
