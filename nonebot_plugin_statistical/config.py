@@ -15,7 +15,6 @@ driver: Driver = nonebot.get_driver()
 DATA_PATH = driver.config.statistical_path if driver.config.statistical_path else 'data/statistical/'
 BLACK_LIST = driver.config.statistical_black_model if driver.config.statistical_black_model else []
 BLACK_PRIORITY = driver.config.statistical_black_priority if driver.config.statistical_black_priority else []
-AUTO_CMD_FLAG = False if str(driver.config.statistical_auto_cmd).upper() == 'FALSE' else True
 
 DATA_PATH = str(Path(DATA_PATH).absolute()) + '/'
 # print(DATA_PATH)
@@ -25,38 +24,6 @@ statistics_user_file = Path(f'{DATA_PATH}/_prefix_user_count.json')
 plugin2cmd_file = Path(f'{DATA_PATH}/plugin2cmd.json')
 
 statistics_user_file.parent.mkdir(exist_ok=True, parents=True)
-
-
-# 检测cmd是否重复
-def check_cmd_exists(cmd: str = None):
-    global plugin2cmd
-    _cmd_list = []
-    for _plugin in plugin2cmd:
-        if _plugin != 'white_list':
-            if cmd:
-                for _cmd in plugin2cmd[_plugin]['cmd']:
-                    if cmd == _cmd:
-                        raise ValueError(f'别名 {_cmd} 有重复，请修改文件后重新启动....')
-            else:
-                for _cmd in plugin2cmd[_plugin]['cmd']:
-                    if str(_cmd) in _cmd_list:
-                        print(_cmd)
-                        raise ValueError(f'别名 {_cmd} 有重复，请修改文件后重新启动....')
-                    _cmd_list.append(str(_cmd))
-    return _cmd_list
-
-
-try:
-    with open(plugin2cmd_file, 'r', encoding='utf8') as f:
-        plugin2cmd: dict = json.load(f)
-    check_cmd_exists()
-except FileNotFoundError:
-    plugin2cmd = {'white_list': []}
-    for priority in matchers:
-        for matcher in matchers[priority]:
-            module = matcher.module
-            if module not in BLACK_LIST and priority not in BLACK_PRIORITY:
-                plugin2cmd[module] = {'cmd': []}
 
 
 def _init():
@@ -78,6 +45,23 @@ def _init():
     }
 
 
+# 保存数据
+def save_data(plugin2cmd_, _group_count_dict, _user_count_dict):
+    global _prefix_group_count_dict, _prefix_user_count_dict, plugin2cmd
+    if _group_count_dict:
+        with open(statistics_group_file, 'w', encoding='utf8') as f:
+            json.dump(_group_count_dict, f, indent=4, ensure_ascii=False)
+        _prefix_group_count_dict = _group_count_dict
+    if _user_count_dict:
+        with open(statistics_user_file, 'w', encoding='utf8') as f:
+            json.dump(_user_count_dict, f, ensure_ascii=False, indent=4)
+        _prefix_user_count_dict = _user_count_dict
+    if plugin2cmd_:
+        with open(plugin2cmd_file, 'w', encoding='utf8') as f:
+            json.dump(plugin2cmd_, f, indent=4, ensure_ascii=False)
+        plugin2cmd = plugin2cmd_
+
+
 try:
     with open(statistics_group_file, 'r', encoding='utf8') as f:
         _prefix_group_count_dict: dict = json.load(f)
@@ -91,9 +75,54 @@ except FileNotFoundError:
     _prefix_user_count_dict: dict = _init()
 
 
-# 重新加载数据...
-async def reload_data(check_flag: bool = False):
-    await asyncio.get_event_loop().run_in_executor(None, _reload_data, check_flag)
+# 检测cmd是否重复
+def check_cmd_exists(cmd: str = None):
+    global plugin2cmd
+    _cmd_list = []
+    for _plugin in plugin2cmd:
+        if _plugin != 'white_list':
+            if cmd:
+                for _cmd in plugin2cmd[_plugin]['cmd']:
+                    if cmd == _cmd:
+                        raise ValueError(f'别名 {_cmd} 有重复，请修改文件后重新启动....')
+            else:
+                for _cmd in plugin2cmd[_plugin]['cmd']:
+                    if str(_cmd) in _cmd_list:
+                        print(_cmd)
+                        raise ValueError(f'别名 {_cmd} 有重复，请修改文件后重新启动....')
+                    _cmd_list.append(str(_cmd))
+    return _cmd_list
+
+
+# 替换显示关键字
+def _replace_key():
+    global _prefix_group_count_dict, _prefix_user_count_dict
+    for data in [_prefix_group_count_dict, _prefix_user_count_dict]:
+        for itype in list(data.keys()):
+            if itype in ['start_time', 'day_index']:
+                continue
+            for key in list(data[itype].keys()):
+                if itype in ['total_statistics', 'day_statistics'] or key == 'total':
+                    for plugin_name in list(data[itype][key].keys()):
+                        for plugin in list(plugin2cmd.keys()):
+                            if plugin != 'white_list':
+                                if plugin_name in plugin2cmd[plugin]['cmd']:
+                                    if plugin_name != plugin2cmd[plugin]['cmd'][0]:
+                                        data[itype][key][plugin2cmd[plugin]['cmd'][0]] = \
+                                            data[itype][key][plugin_name]
+                                        del data[itype][key][plugin_name]
+                                    break
+                else:
+                    for day in list(data[itype][key].keys()):
+                        for plugin_name in list(data[itype][key][day].keys()):
+                            for plugin in list(plugin2cmd.keys()):
+                                if plugin != 'white_list':
+                                    if plugin_name in plugin2cmd[plugin]['cmd']:
+                                        if plugin_name != plugin2cmd[plugin]['cmd'][0]:
+                                            data[itype][key][day][plugin2cmd[plugin]['cmd'][0]] = \
+                                                data[itype][key][day][plugin_name]
+                                            del data[itype][key][day][plugin_name]
+                                        break
 
 
 # 重新加载数据...
@@ -115,6 +144,25 @@ def _reload_data(check_flag: bool = False):
     # print(_prefix_group_count_dict)
 
 
+try:
+    with open(plugin2cmd_file, 'r', encoding='utf8') as f:
+        plugin2cmd: dict = json.load(f)
+    check_cmd_exists()
+    _reload_data(True)
+except FileNotFoundError:
+    plugin2cmd = {'white_list': []}
+    for priority in matchers:
+        for matcher in matchers[priority]:
+            module = matcher.module
+            if module not in BLACK_LIST and priority not in BLACK_PRIORITY:
+                plugin2cmd[module] = {'cmd': []}
+
+
+# 重新加载数据...
+async def reload_data(check_flag: bool = False):
+    await asyncio.get_event_loop().run_in_executor(None, _reload_data, check_flag)
+
+
 def get_plugin2cmd():
     return plugin2cmd
 
@@ -125,23 +173,6 @@ def get_prefix_user_count_dict():
 
 def get_prefix_group_count_dict():
     return _prefix_group_count_dict
-
-
-# 保存数据
-def save_data(plugin2cmd_, _group_count_dict, _user_count_dict):
-    global _prefix_group_count_dict, _prefix_user_count_dict, plugin2cmd
-    if _group_count_dict:
-        with open(statistics_group_file, 'w', encoding='utf8') as f:
-            json.dump(_group_count_dict, f, indent=4, ensure_ascii=False)
-        _prefix_group_count_dict = _group_count_dict
-    if _user_count_dict:
-        with open(statistics_user_file, 'w', encoding='utf8') as f:
-            json.dump(_user_count_dict, f, ensure_ascii=False, indent=4)
-        _prefix_user_count_dict = _user_count_dict
-    if plugin2cmd_:
-        with open(plugin2cmd_file, 'w', encoding='utf8') as f:
-            json.dump(plugin2cmd_, f, indent=4, ensure_ascii=False)
-        plugin2cmd = plugin2cmd_
 
 
 # 删除cmd
@@ -187,37 +218,6 @@ def get_white_cmd():
             for cmd in plugin2cmd[model]['cmd']:
                 tmp.append(cmd)
     return tmp
-
-
-# 替换显示关键字
-def _replace_key():
-    global _prefix_group_count_dict, _prefix_user_count_dict
-    for data in [_prefix_group_count_dict, _prefix_user_count_dict]:
-        for itype in list(data.keys()):
-            if itype in ['start_time', 'day_index']:
-                continue
-            for key in list(data[itype].keys()):
-                if itype in ['total_statistics', 'day_statistics'] or key == 'total':
-                    for plugin_name in list(data[itype][key].keys()):
-                        for plugin in list(plugin2cmd.keys()):
-                            if plugin != 'white_list':
-                                if plugin_name in plugin2cmd[plugin]['cmd']:
-                                    if plugin_name != plugin2cmd[plugin]['cmd'][0]:
-                                        data[itype][key][plugin2cmd[plugin]['cmd'][0]] = \
-                                            data[itype][key][plugin_name]
-                                        del data[itype][key][plugin_name]
-                                    break
-                else:
-                    for day in list(data[itype][key].keys()):
-                        for plugin_name in list(data[itype][key][day].keys()):
-                            for plugin in list(plugin2cmd.keys()):
-                                if plugin != 'white_list':
-                                    if plugin_name in plugin2cmd[plugin]['cmd']:
-                                        if plugin_name != plugin2cmd[plugin]['cmd'][0]:
-                                            data[itype][key][day][plugin2cmd[plugin]['cmd'][0]] = \
-                                                data[itype][key][day][plugin_name]
-                                            del data[itype][key][day][plugin_name]
-                                        break
 
 
 def _del_cmd(cmd: str):

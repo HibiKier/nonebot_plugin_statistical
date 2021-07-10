@@ -29,14 +29,13 @@ async def _(matcher: Matcher, exception: Optional[Exception], bot: Bot, event: G
                                                                                '添加统计展示白名单', '删除统计展示白名单',
                                                                                '显示统计展示白名单']:
             return
-        # if AUTO_CMD_FLAG:
         if not plugin2cmd.get(model):
-            if current_cmd and AUTO_CMD_FLAG:
+            if current_cmd:
                 plugin2cmd[model] = {'cmd': [current_cmd]}
             else:
                 plugin2cmd[model] = {'cmd': [model]}
         if current_cmd not in plugin2cmd[model]['cmd']:
-            if current_cmd and AUTO_CMD_FLAG:
+            if current_cmd:
                 plugin2cmd[model]['cmd'].append(current_cmd)
             elif not plugin2cmd[model]['cmd']:
                 plugin2cmd[model]['cmd'].append(model)
