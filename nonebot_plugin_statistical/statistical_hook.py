@@ -4,7 +4,8 @@ from nonebot.typing import T_State
 from nonebot import require
 from nonebot.adapters.cqhttp import Bot, GroupMessageEvent
 from nonebot.typing import Optional
-from .config import save_data, get_prefix_group_count_dict, get_prefix_user_count_dict, get_plugin2cmd
+from .config import save_data, get_prefix_group_count_dict, get_prefix_user_count_dict, \
+    get_plugin2cmd, BLACK_LIST, BLACK_PRIORITY
 try:
     import ujson as json
 except ModuleNotFoundError:
@@ -16,8 +17,9 @@ scheduler = require('nonebot_plugin_apscheduler').scheduler
 # 添加命令次数
 @run_postprocessor
 async def _(matcher: Matcher, exception: Optional[Exception], bot: Bot, event: GroupMessageEvent, state: T_State):
-    if matcher.type == 'message':
-        model = matcher.module
+    model = matcher.module
+    priority = matcher.priority
+    if matcher.type == 'message' and model not in BLACK_LIST and priority not in BLACK_PRIORITY:
         current_cmd = state["_prefix"]["raw_command"]
         plugin2cmd = get_plugin2cmd()
         # print(f'current_cmd --> {current_cmd}')

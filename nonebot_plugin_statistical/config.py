@@ -11,13 +11,13 @@ except ModuleNotFoundError:
     import json
 
 driver: Driver = nonebot.get_driver()
-print(nonebot.get_driver().config.statistical_path)
-print(driver.config.statistical_path)
 
 DATA_PATH = driver.config.statistical_path if driver.config.statistical_path else 'data/statistical/'
+BLACK_LIST = driver.config.statistical_black_model if driver.config.statistical_black_model else []
+BLACK_PRIORITY = driver.config.statistical_black_priority if driver.config.statistical_black_priority else []
 
 DATA_PATH = str(Path(DATA_PATH).absolute()) + '/'
-print(DATA_PATH)
+# print(DATA_PATH)
 
 statistics_group_file = Path(f'{DATA_PATH}/_prefix_group_count.json')
 statistics_user_file = Path(f'{DATA_PATH}/_prefix_user_count.json')
@@ -54,7 +54,8 @@ except FileNotFoundError:
     for priority in matchers:
         for matcher in matchers[priority]:
             module = matcher.module
-            plugin2cmd[module] = {'cmd': []}
+            if module not in BLACK_LIST and priority not in BLACK_PRIORITY:
+                plugin2cmd[module] = {'cmd': []}
 
 
 def _init():
@@ -267,7 +268,7 @@ def _update_cmd_priority(cmd: str):
                 tmp = plugin2cmd[model]['cmd'][index]
                 plugin2cmd[model]['cmd'][index] = plugin2cmd[model]['cmd'][0]
                 plugin2cmd[model]['cmd'][0] = tmp
-                print(plugin2cmd)
+                # print(plugin2cmd)
                 _replace_key()
                 save_data(plugin2cmd, _prefix_group_count_dict, _prefix_user_count_dict)
                 return True
