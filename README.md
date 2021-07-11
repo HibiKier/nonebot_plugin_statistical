@@ -46,7 +46,7 @@
 
     STATISTICAL_PATH = ''     # 设置数据存储路径，默认路径为 data/statistical/
 
-    # 不屏蔽 on_message 会导致统计重复以及重启bot时该插件因重复cmd报错
+    # 不屏蔽 on_message 或 不将 on_message 放入白名单（黑白名单二选一） 会导致统计重复以及重启bot时该插件因重复cmd报错
     
     STATISTICAL_BLACK_MODEL = []          # 统计插件黑名单，不会统计列表中的插件模块，示例：[setu, loli]
 
