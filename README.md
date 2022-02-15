@@ -106,6 +106,10 @@
 
 ## 更新
 
+### 2022/2/15
+  
+  * 适配至nb beat2
+
 ### 2021/7/10
   
   * 添加配置STATISTICAL_BLACK_MODEL和STATISTICAL_BLACK_PRIORITY

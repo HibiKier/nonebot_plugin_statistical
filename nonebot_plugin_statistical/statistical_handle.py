@@ -1,8 +1,9 @@
 from nonebot import on_command
-from nonebot.adapters.cqhttp import Bot, GroupMessageEvent, MessageEvent, MessageSegment
+from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, MessageEvent, MessageSegment, Message
 from nonebot.typing import T_State
 from .config import statistics_group_file, statistics_user_file, reload_data, get_plugin2cmd, \
     del_cmd, add_cmd, query_cmd, update_cmd_priority, add_white, del_white, show_white, get_white_cmd
+from nonebot.params import CommandArg
 import base64
 from io import BytesIO
 from matplotlib import pyplot as plt
@@ -43,7 +44,7 @@ show_white_list = on_command('显示统计展示白名单', permission=SUPERUSER
 
 
 @reload.handle()
-async def _(bot: Bot, event: MessageEvent, state: T_State):
+async def _():
     try:
         await reload_data(True)
         await reload.send('重载统计数据完成...')
@@ -52,8 +53,8 @@ async def _(bot: Bot, event: MessageEvent, state: T_State):
 
 
 @delete_cmd.handle()
-async def _(bot: Bot, event: MessageEvent, state: T_State):
-    msg = str(event.get_message())
+async def _(arg: Message = CommandArg()):
+    msg = arg.extract_plain_text().strip()
     if await del_cmd(msg):
         await delete_cmd.send(f'统计cmd {msg} 删除成功....')
     else:
@@ -61,8 +62,8 @@ async def _(bot: Bot, event: MessageEvent, state: T_State):
 
 
 @add_m_cmd.handle()
-async def _(bot: Bot, event: MessageEvent, state: T_State):
-    msg = str(event.get_message())
+async def _(arg: Message = CommandArg()):
+    msg = arg.extract_plain_text().strip()
     if not msg:
         await add_m_cmd.finish('请输入正确参数：[cmd] [new_cmd]')
     msg = msg.split(' ')
@@ -78,8 +79,8 @@ async def _(bot: Bot, event: MessageEvent, state: T_State):
 
 
 @show_m_cmd.handle()
-async def _(bot: Bot, event: MessageEvent, state: T_State):
-    msg = str(event.get_message())
+async def _(arg: Message = CommandArg()):
+    msg = arg.extract_plain_text().strip()
     if not msg:
         await show_m_cmd.finish('请输入正确参数：[cmd]')
     cmd = await query_cmd(msg)
@@ -90,8 +91,8 @@ async def _(bot: Bot, event: MessageEvent, state: T_State):
 
 
 @change_cmd_priority.handle()
-async def _(bot: Bot, event: MessageEvent, state: T_State):
-    msg = str(event.get_message())
+async def _(arg: Message = CommandArg()):
+    msg = arg.extract_plain_text().strip()
     if not msg:
         await change_cmd_priority.finish('请输入正确参数：[cmd]')
     if await update_cmd_priority(msg):
@@ -101,8 +102,8 @@ async def _(bot: Bot, event: MessageEvent, state: T_State):
 
 
 @add_white_list.handle()
-async def _(bot: Bot, event: MessageEvent, state: T_State):
-    msg = str(event.get_message())
+async def _(arg: Message = CommandArg()):
+    msg = arg.extract_plain_text().strip()
     if not msg:
         await add_white_list.finish('请输入正确参数：[cmd]')
     if await add_white(msg):
@@ -112,8 +113,8 @@ async def _(bot: Bot, event: MessageEvent, state: T_State):
 
 
 @del_white_list.handle()
-async def _(bot: Bot, event: MessageEvent, state: T_State):
-    msg = str(event.get_message())
+async def _(arg: Message = CommandArg()):
+    msg = arg.extract_plain_text().strip()
     if not msg:
         await del_white_list.finish('请输入正确参数：[cmd]')
     if await del_white(msg):
@@ -123,13 +124,13 @@ async def _(bot: Bot, event: MessageEvent, state: T_State):
 
 
 @show_white_list.handle()
-async def _(bot: Bot, event: MessageEvent, state: T_State):
+async def _():
     await del_white_list.send("查询到的统计白名单：" + "，".join(show_white()))
 
 
 @statistics.handle()
-async def _(bot: Bot, event: MessageEvent, state: T_State):
-    msg = str(event.get_message())
+async def _(bot: Bot, event: MessageEvent, state: T_State, arg: Message = CommandArg()):
+    msg = arg.extract_plain_text().strip()
     if state["_prefix"]["raw_command"][:2] == '我的':
         itype = 'user'
         key = str(event.user_id)

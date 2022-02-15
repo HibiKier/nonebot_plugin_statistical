@@ -2,7 +2,7 @@ from nonebot.matcher import Matcher
 from nonebot.message import run_postprocessor
 from nonebot.typing import T_State
 from nonebot import require
-from nonebot.adapters.cqhttp import Bot, GroupMessageEvent
+from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent
 from nonebot.typing import Optional
 from .config import save_data, get_prefix_group_count_dict, get_prefix_user_count_dict, \
     get_plugin2cmd, BLACK_LIST, BLACK_PRIORITY
